@@ -26,7 +26,7 @@ class _FnbLocationScreenState extends State<FnbLocationScreen> {
 
   Future<void> fetchCities() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.12:8000/api/fnb/cities'));
+        await http.get(Uri.parse('http://192.168.1.22:8000/api/fnb/cities'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -53,7 +53,7 @@ class _FnbLocationScreenState extends State<FnbLocationScreen> {
         "Fetching venues for city: ${selectedCity!.name} (ID: ${selectedCity!.id})");
 
     final response = await http.get(
-      Uri.parse('http://192.168.1.12:8000/api/fnb/venues/${selectedCity!.id}'),
+      Uri.parse('http://192.168.1.22:8000/api/fnb/venues/${selectedCity!.id}'),
     );
 
     print("Response status: ${response.statusCode}");
@@ -110,7 +110,13 @@ class _FnbLocationScreenState extends State<FnbLocationScreen> {
             const SliverToBoxAdapter(child: FnbOfferCarousel()),
             SliverToBoxAdapter(
               child: Container(
-                color: Colors.blue[700],
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade700, Colors.blue.shade200],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(

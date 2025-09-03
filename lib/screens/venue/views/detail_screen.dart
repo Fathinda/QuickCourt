@@ -1,16 +1,20 @@
 import 'dart:convert';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:quick_court_booking/helper/category_icon_helper.dart';
+import 'package:quick_court_booking/helper/chat_helper.dart';
 import 'package:quick_court_booking/helper/facility_icon_helper.dart';
 import 'package:quick_court_booking/models/venue_detail_model.dart';
 // import 'package:quick_court_booking/screens/booking/views/booking_time_screen.dart';
 import 'package:quick_court_booking/screens/booking/views/select_date_screen.dart';
+import 'package:quick_court_booking/screens/chat/chat_screen.dart';
 // import 'package:quick_court_booking/screens/booking/views/select_date_screen.dart';
 import 'package:quick_court_booking/screens/venue/views/components/appbar.dart';
 import 'package:quick_court_booking/screens/venue/views/components/venue_carousel.dart';
 import 'package:quick_court_booking/screens/venue/views/components/venue_detail_bottom_sheets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailVenueScreen extends StatefulWidget {
   final int venueId;
@@ -34,7 +38,7 @@ class _DetailVenueScreenState extends State<DetailVenueScreen> {
   Future<void> fetchVenue() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.12:8000/api/venues/${widget.venueId}'),
+        Uri.parse('http://192.168.1.22:8000/api/venues/${widget.venueId}'),
       );
 
       if (response.statusCode == 200) {
@@ -51,6 +55,28 @@ class _DetailVenueScreenState extends State<DetailVenueScreen> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> _launchMapsUrl(String address) async {
+    final encodedAddress = Uri.encodeComponent(address);
+    final Uri googleMapsUrl = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$encodedAddress');
+
+    if (await canLaunchUrl(googleMapsUrl)) {
+      try {
+        await launchUrl(
+          googleMapsUrl,
+          mode: LaunchMode.platformDefault,
+        );
+      } catch (e) {
+        print('Error launching URL: $e');
+      }
+    } else {
+      print('Tidak bisa buka URL maps');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tidak bisa membuka Google Maps')),
+      );
     }
   }
 
@@ -250,6 +276,57 @@ class _DetailVenueScreenState extends State<DetailVenueScreen> {
                       //   ),
                       // ),
 
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Material(
+                          elevation: 1,
+                          borderRadius: BorderRadius.circular(16),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () {
+                              final address = venue?['address'] ?? '';
+                              if (address.isNotEmpty) {
+                                _launchMapsUrl(address);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Alamat tidak tersedia')),
+                                );
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.location_on,
+                                      color: Colors.lightBlue, size: 28),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      venue?['address'] ??
+                                          'Alamat tidak tersedia',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.black87,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const Icon(Icons.arrow_forward_ios_rounded,
+                                      size: 16, color: Colors.grey),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
                       if (venue?['facilities'] != null &&
                           venue!['facilities'].isNotEmpty)
                         Padding(
@@ -344,6 +421,96 @@ class _DetailVenueScreenState extends State<DetailVenueScreen> {
                   left: 10,
                   right: 0,
                   child: SafeArea(child: VenueAppBar()),
+                ),
+                Positioned(
+                  bottom: 30,
+                  right: 20,
+                  child: FloatingActionButton(
+                    heroTag: "chat_btn",
+                    backgroundColor: Colors.blueAccent,
+                    onPressed: () async {
+                      print('venue data: $venue');
+                      print('ownerId from venue: ${venue?['user_id']}');
+                      final userId =
+                          FirebaseAuth.instance.currentUser?.uid ?? '';
+                      final ownerId = venue?['user_id'];
+
+                      if (userId.isEmpty) {
+                        print('User belum login');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('User belum login')),
+                        );
+                        return;
+                      }
+
+                      if (ownerId == null) {
+                        print('Owner venue tidak ditemukan di venue data');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Owner venue tidak ditemukan')),
+                        );
+                        return;
+                      }
+
+                      print(
+                          'Fetching owner data from API for ownerId: $ownerId');
+                      try {
+                        final response = await http.get(Uri.parse(
+                            'http://192.168.1.22:8000/api/users/id/$ownerId'));
+
+                        print('API Response status: ${response.statusCode}');
+                        print('API Response body: ${response.body}');
+
+                        if (response.statusCode != 200) {
+                          throw Exception('Failed to load owner data');
+                        }
+
+                        final ownerData = jsonDecode(response.body);
+                        print('Owner data decoded: $ownerData');
+
+                        final ownerFirebaseUid =
+                            ownerData['firebase_uid'] as String?;
+                        final ownerName = ownerData['name'] as String?;
+
+                        if (ownerFirebaseUid == null) {
+                          print(
+                              'Owner Firebase UID tidak ditemukan di API response');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Owner Firebase UID tidak ditemukan')),
+                          );
+                          return;
+                        }
+
+                        print('Owner Firebase UID: $ownerFirebaseUid');
+                        print('Owner Name: ${ownerName ?? 'Owner (default)'}');
+
+                        final chatId = await ChatHelper.createOrGetChat(
+                            userId, ownerFirebaseUid);
+                        print('Chat ID created or retrieved: $chatId');
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatScreen(
+                              chatId: chatId.toString(),
+                              currentUserId: userId,
+                              peerId: ownerFirebaseUid,
+                              peerName: ownerName ?? 'Owner',
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        print(
+                            'Error while fetching owner data or creating chat: $e');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: $e')),
+                        );
+                      }
+                    },
+                    child: const Icon(Icons.message, color: Colors.white),
+                  ),
                 ),
               ],
             ),

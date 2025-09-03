@@ -3,7 +3,7 @@ import 'facility_model.dart';
 String getFullImageUrl(String? path) {
   if (path == null || path.isEmpty) return '';
   if (path.startsWith('http') || path.startsWith('https')) return path;
-  return 'http://192.168.1.12:8000/storage/$path';
+  return 'http://192.168.1.22:8000/storage/$path';
 }
 
 class VenueDetail {
@@ -19,7 +19,7 @@ class VenueDetail {
   final String deskripsi;
   final List<Facility> facilities;
   final String rules;
-  // final String ownerId;
+  final String ownerId;
 
   VenueDetail({
     required this.id,
@@ -35,6 +35,7 @@ class VenueDetail {
     required this.facilities,
     required this.rules,
     // required this.ownerId,
+    required this.ownerId,
   });
 
   factory VenueDetail.fromJson(Map<String, dynamic> json) {
@@ -56,7 +57,7 @@ class VenueDetail {
           .map((f) => Facility.fromJson(f))
           .toList(),
       rules: json['rules'],
-      // ownerId: json['user_id'].toString(),
+      ownerId: json['user_id'].toString(),
     );
   }
 }

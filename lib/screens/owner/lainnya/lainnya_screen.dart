@@ -11,7 +11,7 @@ class OwnerVenueMoreScreen extends StatelessWidget {
     final imageUrl = venue.imageUrl.isNotEmpty
         ? (venue.imageUrl.startsWith("http")
             ? venue.imageUrl
-            : "http://192.168.1.12:8000/storage/${venue.thumbnail}")
+            : "http://192.168.1.22:8000/storage/${venue.thumbnail}")
         : 'https://via.placeholder.com/150';
 
     print('Debug: Image URL yang dipakai -> $imageUrl');
@@ -65,6 +65,7 @@ class OwnerVenueMoreScreen extends StatelessWidget {
         _menuItem(Icons.settings, "Pengaturan Venue", () {
           // TODO: Navigasi ke pengaturan venue
         }),
+        _menuItem(Icons.add_alert, "Libur", () {}),
         const Padding(
           padding: EdgeInsets.all(8.0),
           child: Text(

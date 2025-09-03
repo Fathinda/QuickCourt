@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quick_court_booking/models/cart_model.dart';
+import 'package:quick_court_booking/screens/cart/views/checkout_screen.dart';
 import 'package:quick_court_booking/services/cart_services.dart';
 
 class CartScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _CartScreenState extends State<CartScreen> {
 
     try {
       await removeFromCartLocalAndServer(item.menuId, item.cartId!);
-      
+
       final updatedList = List<CartItem>.from(cart.value);
       updatedList.removeWhere((element) => element.cartId == item.cartId);
       cart.value = updatedList;
@@ -88,7 +89,8 @@ class _CartScreenState extends State<CartScreen> {
                             children: [
                               Container(
                                 height: 90,
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
                                 child: Row(
                                   children: [
                                     AspectRatio(
@@ -98,13 +100,16 @@ class _CartScreenState extends State<CartScreen> {
                                               item.imageUrl!,
                                               fit: BoxFit.cover,
                                             )
-                                          : const Icon(Icons.fastfood, size: 40),
+                                          : const Icon(Icons.fastfood,
+                                              size: 40),
                                     ),
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             item.name,
@@ -117,21 +122,27 @@ class _CartScreenState extends State<CartScreen> {
                                           Row(
                                             children: [
                                               IconButton(
-                                                icon: const Icon(Icons.remove_circle_outline),
+                                                icon: const Icon(Icons
+                                                    .remove_circle_outline),
                                                 onPressed: () {
                                                   if (item.qty > 1) {
-                                                    _updateQuantity(item, item.qty - 1);
+                                                    _updateQuantity(
+                                                        item, item.qty - 1);
                                                   }
                                                 },
                                               ),
                                               Text(
                                                 '${item.qty}',
-                                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                               IconButton(
-                                                icon: const Icon(Icons.add_circle_outline),
+                                                icon: const Icon(
+                                                    Icons.add_circle_outline),
                                                 onPressed: () {
-                                                  _updateQuantity(item, item.qty + 1);
+                                                  _updateQuantity(
+                                                      item, item.qty + 1);
                                                 },
                                               ),
                                               const Spacer(),
@@ -148,7 +159,8 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
                                       onPressed: () => _removeItem(item),
                                     ),
                                   ],
@@ -157,7 +169,6 @@ class _CartScreenState extends State<CartScreen> {
                               const Divider(height: 1),
                             ],
                           );
-
                         },
                       ),
                     ),
@@ -178,14 +189,19 @@ class _CartScreenState extends State<CartScreen> {
                             flex: 2,
                             child: ElevatedButton(
                               onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Checkout belum siap'),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CheckoutScreen(
+                                      cartItems: cart.value,
+                                      total: cartTotal(),
+                                    ),
                                   ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),

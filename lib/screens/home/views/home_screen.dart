@@ -4,14 +4,10 @@ import 'package:flutter/material.dart';
 // import 'package:quick_court_booking/constants.dart';
 import 'package:quick_court_booking/route/screen_export.dart';
 import 'package:quick_court_booking/screens/home/views/components/offers_carousel.dart';
+import 'package:quick_court_booking/screens/home/views/components/promo_section.dart';
 import 'package:quick_court_booking/screens/home/views/components/venue_recomended.dart';
 // import 'package:shimmer/shimmer.dart';
 
-// import 'components/best_sellers.dart';
-// import 'components/flash_sale.dart';
-// import 'components/most_popular.dart';
-// import 'components/offer_carousel_and_categories.dart';
-// import 'components/popular_products.dart';
 import 'components/header_section.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,7 +44,7 @@ class HomeScreen extends StatelessWidget {
             ),
 
             SliverToBoxAdapter(child: VenueRecomended()),
-            
+
             SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 0),
@@ -61,7 +57,18 @@ class HomeScreen extends StatelessWidget {
 
             SliverToBoxAdapter(child: OffersCarousel()),
 
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 0),
+                child: Divider(
+                  thickness: 0.5,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
             
+            SliverToBoxAdapter(child: PromoSection()),
+
             // const SliverToBoxAdapter(child: PopularProducts()),
             // const SliverPadding(
             // padding: EdgeInsets.symmetric(vertical: defaultPadding * 1.5),

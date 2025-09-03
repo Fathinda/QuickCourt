@@ -9,6 +9,8 @@ class BookingOwner {
   final String time;
   final int totalPrice;
   final String? userPhotoUrl;
+  final String? receiptUrl; // tambahan
+  final String? receiptStatus; // tambahan
 
   BookingOwner({
     required this.id,
@@ -21,6 +23,8 @@ class BookingOwner {
     required this.time,
     required this.totalPrice,
     this.userPhotoUrl,
+    this.receiptUrl,
+    this.receiptStatus,
   });
 
   factory BookingOwner.fromJson(Map<String, dynamic> json) {
@@ -28,16 +32,23 @@ class BookingOwner {
     final city = venue['city'] ?? {};
     final primaryImage = venue['primary_image'] ?? {};
     final user = json['user'] ?? {};
+    final payment = json['payment'] ?? {}; // tambahan parsing payment
 
     String imagePath = '';
     if (primaryImage['image_url'] != null) {
       imagePath =
-          "http://192.168.1.12:8000/storage/${primaryImage['image_url']}";
+          "http://192.168.1.22:8000/storage/${primaryImage['image_url']}";
     }
 
     String? userPhotoPath;
     if (user['photo_url'] != null) {
-      userPhotoPath = "http://192.168.1.12:8000/storage/${user['photo_url']}";
+      userPhotoPath = "http://192.168.1.22:8000/storage/${user['photo_url']}";
+    }
+
+    String? receiptPath;
+    if (payment['receipt_url'] != null) {
+      receiptPath =
+          "http://192.168.1.22:8000/storage/${payment['receipt_url']}";
     }
 
     return BookingOwner(
@@ -52,10 +63,12 @@ class BookingOwner {
       userPhotoUrl: userPhotoPath,
       totalPrice: (double.tryParse(json['total_price']?.toString() ?? '0') ?? 0)
           .toInt(),
+      receiptUrl: receiptPath,
+      receiptStatus: payment['status'], // contoh: pending/confirmed
     );
   }
 
-  BookingOwner copyWith({String? status}) {
+  BookingOwner copyWith({String? status, String? receiptStatus}) {
     return BookingOwner(
       id: id,
       userName: userName,
@@ -67,6 +80,8 @@ class BookingOwner {
       time: time,
       totalPrice: totalPrice,
       userPhotoUrl: userPhotoUrl,
+      receiptUrl: receiptUrl,
+      receiptStatus: receiptStatus ?? this.receiptStatus,
     );
   }
 }

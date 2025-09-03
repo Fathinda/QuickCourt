@@ -7,7 +7,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:quick_court_booking/helper/chat_badge_controller.dart';
 import 'package:quick_court_booking/models/venue_model.dart';
 import 'package:quick_court_booking/screens/chat/chat_list_screen.dart';
+import 'package:quick_court_booking/screens/owner/fnb/fnb_choose_screen.dart';
 import 'package:quick_court_booking/screens/owner/lainnya/lainnya_screen.dart';
+import 'package:quick_court_booking/screens/owner/promo/owner_promo_list_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'booking/booking_list_screen.dart';
 
@@ -40,7 +42,7 @@ class _OwnerVenueDashboardState extends State<OwnerVenueDashboard> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url =
-          "http://192.168.1.12:8000/api/owner-dashboard/${widget.venueId}";
+          "http://192.168.1.22:8000/api/owner-dashboard/${widget.venueId}";
       final response = await http.get(
         Uri.parse(url),
         headers: {"Authorization": "Bearer $token"},
@@ -70,9 +72,9 @@ class _OwnerVenueDashboardState extends State<OwnerVenueDashboard> {
       case 0:
         return _buildHome();
       case 1:
-        return const Center(child: Text("Berita"));
+        return OwnerPromoListScreen(venueId: widget.venueId);
       case 2:
-        return const Center(child: Text("F&B"));
+        return FnbDashboardScreen(venueId: widget.venueId);
       case 3:
         return BookingListScreen(venueId: widget.venueId);
       case 4:
@@ -406,7 +408,7 @@ class _OwnerVenueDashboardState extends State<OwnerVenueDashboard> {
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.dashboard), label: "Beranda"),
-          BottomNavigationBarItem(icon: Icon(Icons.article), label: "Berita"),
+          BottomNavigationBarItem(icon: Icon(Icons.article), label: "Promo"),
           BottomNavigationBarItem(icon: Icon(Icons.fastfood), label: "F&B"),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: "Booking"),
           BottomNavigationBarItem(

@@ -73,7 +73,7 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
                           DateFormat('yyyy-MM-dd').format(fullDate);
 
                       final response = await http.get(Uri.parse(
-                          'http://192.168.1.12:8000/api/venues/${widget.venue.id}/available-times?date=$formatted'));
+                          'http://192.168.1.22:8000/api/venues/${widget.venue.id}/available-times?date=$formatted'));
 
                       if (response.statusCode == 200) {
                         final data = jsonDecode(response.body);
@@ -308,6 +308,9 @@ class _KonfirmasiBookingScreenState extends State<KonfirmasiBookingScreen> {
 
     setState(() => isLoading = true);
 
+    print("Venue ID: ${widget.venue.id}");
+    print("Total price: ${widget.hargaTotal}");
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('laravel_token');
@@ -328,10 +331,11 @@ class _KonfirmasiBookingScreenState extends State<KonfirmasiBookingScreen> {
       final bookingDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.12:8000/api/bookings'),
+        Uri.parse('http://192.168.1.22:8000/api/bookings'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: jsonEncode({
           'venue_id': widget.venue.id,
@@ -340,8 +344,12 @@ class _KonfirmasiBookingScreenState extends State<KonfirmasiBookingScreen> {
           'start_time': startTime,
           'end_time': endTime,
           'total_price': widget.hargaTotal,
+          'payment_method': 'midtrans',
         }),
       );
+
+      print("Status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
 
       final responseData = jsonDecode(response.body);
       if (response.statusCode == 201 && responseData['success'] == true) {

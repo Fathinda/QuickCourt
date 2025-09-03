@@ -32,7 +32,7 @@ class Venue {
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
       address: json['address'] ?? '',
-      capacity: json['capacity'] ?? 0,
+      capacity: int.tryParse(json['capacity'].toString()) ?? 0,
       price: json['price']?.toString() ?? '0',
       thumbnail: json['thumbnail'] ?? '',
       status: json['status'] ?? '',
@@ -55,6 +55,6 @@ class Venue {
     if (img.startsWith("http")) {
       return img;
     }
-    return "http://192.168.1.12:8000/storage/$img";
+    return "http://192.168.1.22:8000/storage/$img";
   }
 }

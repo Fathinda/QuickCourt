@@ -62,10 +62,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text("Profile"),
-      //   automaticallyImplyLeading: false,
-      // ),
       body: ListView(
         children: [
           ProfileCard(
@@ -100,16 +96,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           const SizedBox(height: defaultPadding / 2),
-          ProfileMenuListTile(
-            text: "Orders",
-            svgSrc: "assets/icons/Order.svg",
-            press: () {
-              // Navigator.pushNamed(context, ordersScreenRoute);
-            },
-          ),
+          // ProfileMenuListTile(
+          //   text: "Profile Info",
+          //   svgSrc: "assets/icons/pro.svg",
+          //   press: () {
+          //     // Navigator.pushNamed(context, ordersScreenRoute);
+          //   },
+          // ),
 
           ProfileMenuListTile(
-            text: "Booking Manage",
+            text: "Owner Panel",
             svgSrc: "assets/icons/Accessories.svg",
             press: () async {
               final prefs = await SharedPreferences.getInstance();
@@ -124,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               try {
                 final userResponse = await http.get(
-                  Uri.parse('http://192.168.1.12:8000/api/user'),
+                  Uri.parse('http://192.168.1.22:8000/api/user'),
                   headers: {
                     'Authorization': 'Bearer $token',
                     'Accept': 'application/json',
@@ -151,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 }
 
                 final venueResponse = await http.get(
-                  Uri.parse('http://192.168.1.12:8000/api/owner/check-venue'),
+                  Uri.parse('http://192.168.1.22:8000/api/owner/check-venue'),
                   headers: {
                     'Authorization': 'Bearer $token',
                     'Accept': 'application/json',
@@ -197,32 +193,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
           const SizedBox(height: defaultPadding),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: defaultPadding, vertical: defaultPadding / 2),
-            child: Text(
-              "Personalization",
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
-          DividerListTileWithTrilingText(
-            svgSrc: "assets/icons/Notification.svg",
-            title: "Notification",
-            trilingText: "Off",
-            press: () {
-              // Navigator.pushNamed(context, enableNotificationScreenRoute);
-            },
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(
+          //       horizontal: defaultPadding, vertical: defaultPadding / 2),
+          //   child: Text(
+          //     "Personalization",
+          //     style: Theme.of(context).textTheme.titleSmall,
+          //   ),
+          // ),
 
           const SizedBox(height: defaultPadding),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: defaultPadding, vertical: defaultPadding / 2),
-            child: Text(
-              "Settings",
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(
+          //       horizontal: defaultPadding, vertical: defaultPadding / 2),
+          //   child: Text(
+          //     "Settings",
+          //     style: Theme.of(context).textTheme.titleSmall,
+          //   ),
+          // ),
 
           const SizedBox(height: defaultPadding),
 

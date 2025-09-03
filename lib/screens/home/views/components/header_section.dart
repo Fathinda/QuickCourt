@@ -39,7 +39,7 @@ class _HeaderSectionState extends State<HeaderSection> {
     }
 
     final response = await http.get(
-      Uri.parse('http://192.168.1.12:8000/api/user'),
+      Uri.parse('http://192.168.1.22:8000/api/user'),
       headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',

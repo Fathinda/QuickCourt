@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:quick_court_booking/helper/category_icon_helper.dart';
 import 'package:quick_court_booking/providers/venue_provider.dart';
 import 'package:quick_court_booking/models/venue_model.dart';
-import 'package:quick_court_booking/screens/venue/views/detail_screen.dart'; // pastikan path nya benar
+import 'package:quick_court_booking/screens/venue/views/detail_screen.dart'; 
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

@@ -43,11 +43,11 @@ class _FnbMenuScreenState extends State<FnbMenuScreen> {
     try {
       final catRes = await http.get(
         Uri.parse(
-            'http://192.168.1.12:8000/api/fnb/categories/venue/${widget.venueId}'),
+            'http://192.168.1.22:8000/api/fnb/categories/venue/${widget.venueId}'),
       );
       final menuRes = await http.get(
         Uri.parse(
-            'http://192.168.1.12:8000/api/fnb/menu/venue/${widget.venueId}'),
+            'http://192.168.1.22:8000/api/fnb/menu/venue/${widget.venueId}'),
       );
 
       if (!mounted) return;
@@ -130,7 +130,13 @@ class _FnbMenuScreenState extends State<FnbMenuScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       width: double.infinity,
-                      color: Colors.blue,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.blue.shade700, Colors.blue.shade200],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
                       child: Row(
                         children: [
                           Expanded(
@@ -227,7 +233,7 @@ class _FnbMenuScreenState extends State<FnbMenuScreen> {
 
                                             try {
                                               await addToCartLocalAndServer(
-                                                  newItem); // sinkron ke backend + update local cart
+                                                  newItem);
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
