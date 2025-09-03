@@ -46,9 +46,15 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       final url = Uri.parse(
           "http://192.168.1.22:8000/api/owner/venues/${widget.venueId}/fnb-orders");
 
+      print("[DEBUG] Requesting: $url");
+      print("[DEBUG] Token: Bearer $token");
+
       final response = await http.get(url, headers: {
         "Authorization": "Bearer $token",
       });
+
+      print("[DEBUG] Response status: ${response.statusCode}");
+      print("[DEBUG] Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -62,7 +68,9 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       } else {
         throw Exception("Gagal mengambil data: ${response.statusCode}");
       }
-    } catch (e) {
+    } catch (e, stacktrace) {
+      print("[DEBUG] Error: $e");
+      print("[DEBUG] Stacktrace: $stacktrace");
       setState(() {
         error = e.toString();
         isLoading = false;

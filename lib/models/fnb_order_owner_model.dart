@@ -18,11 +18,15 @@ class FnbOrderOwner {
   factory FnbOrderOwner.fromJson(Map<String, dynamic> json) {
     return FnbOrderOwner(
       id: json['id'],
-      customerName: json['customer_name'],
-      date: json['date'],
-      status: json['status'],
-      total: json['total'],
-      items: List<String>.from(json['items']),
+      customerName: json['user_id'].toString(), // sementara pakai user_id
+      date: json['created_at'] ?? '',
+      status: json['status'] ?? 'unknown',
+      total: int.tryParse(json['total_amount'].toString()) ?? 0,
+      items: (json['items'] as List<dynamic>).map((item) {
+        final menuId = item['fnb_menu_id'];
+        final qty = item['quantity'];
+        return 'Menu ID $menuId x$qty';
+      }).toList(),
     );
   }
 

@@ -211,9 +211,14 @@ class _RegisterVenueScreenState extends State<RegisterVenueScreen> {
       "longitude": _pickedLatLng?.longitude.toString() ?? '',
     });
 
-    for (int facilityId in selectedFacilities) {
-      request.fields['facilities[]'] = facilityId.toString();
+    for (int i = 0; i < selectedFacilities.length; i++) {
+      request.fields['facility_ids[$i]'] = selectedFacilities[i].toString();
     }
+
+    debugPrint("Fields yang dikirim:");
+    request.fields.forEach((key, value) {
+      debugPrint("$key: $value");
+    });
 
     for (var img in _pickedImages) {
       request.files
