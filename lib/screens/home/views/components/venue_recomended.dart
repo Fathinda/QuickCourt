@@ -16,7 +16,7 @@ class VenueRecomended extends StatefulWidget {
 
 class _VenueRecomendedState extends State<VenueRecomended> {
   late Future<List<Venue>> _venuesFuture;
-  final String _baseUrl = 'http://192.168.1.12:8000/api';
+  final String _baseUrl = 'http://192.168.1.19:8000/api';
 
   @override
   void initState() {

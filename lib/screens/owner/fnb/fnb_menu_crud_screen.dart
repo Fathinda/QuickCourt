@@ -39,7 +39,7 @@ class _FnbMenuCrudScreenState extends State<FnbMenuCrudScreen> {
       final token = await _getToken();
       if (token == null) throw Exception("Token tidak ditemukan");
 
-      final url = Uri.parse("http://192.168.1.12:8000/api/fnb-categories");
+      final url = Uri.parse("http://192.168.1.19:8000/api/fnb-categories");
       final response = await http.get(url, headers: {
         "Authorization": "Bearer $token",
       });
@@ -70,7 +70,7 @@ class _FnbMenuCrudScreenState extends State<FnbMenuCrudScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.12:8000/api/owner/venues/${widget.venueId}/fnb-menus");
+          "http://192.168.1.19:8000/api/owner/venues/${widget.venueId}/fnb-menus");
       final response = await http.get(url, headers: {
         "Authorization": "Bearer $token",
       });
@@ -103,7 +103,7 @@ class _FnbMenuCrudScreenState extends State<FnbMenuCrudScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url =
-          Uri.parse("http://192.168.1.12:8000/api/owner/fnb-menus/$menuId");
+          Uri.parse("http://192.168.1.19:8000/api/owner/fnb-menus/$menuId");
 
       final response = await http.delete(url, headers: {
         "Authorization": "Bearer $token",
@@ -365,7 +365,7 @@ class _FnbMenuCrudScreenState extends State<FnbMenuCrudScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final uri = Uri.parse(
-          "http://192.168.1.12:8000/api/owner/venues/${widget.venueId}/fnb-menus");
+          "http://192.168.1.19:8000/api/owner/venues/${widget.venueId}/fnb-menus");
       print("POST URI: $uri");
 
       final request = http.MultipartRequest("POST", uri);
@@ -420,7 +420,7 @@ class _FnbMenuCrudScreenState extends State<FnbMenuCrudScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final uri =
-          Uri.parse("http://192.168.1.12:8000/api/owner/fnb-menus/$menuId");
+          Uri.parse("http://192.168.1.19:8000/api/owner/fnb-menus/$menuId");
       final request = http.MultipartRequest("POST", uri);
 
       request.headers["Authorization"] = "Bearer $token";

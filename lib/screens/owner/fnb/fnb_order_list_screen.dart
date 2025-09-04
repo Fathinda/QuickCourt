@@ -50,7 +50,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.12:8000/api/owner/venues/${widget.venueId}/fnb-orders");
+          "http://192.168.1.19:8000/api/owner/venues/${widget.venueId}/fnb-orders");
 
       final response = await http.get(url, headers: {
         "Authorization": "Bearer $token",
@@ -90,7 +90,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.12:8000/api/owner/fnb-orders/$orderId/status");
+          "http://192.168.1.19:8000/api/owner/fnb-orders/$orderId/status");
 
       final response = await http.put(
         url,
@@ -128,7 +128,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.12:8000/api/owner/fnb-orders/$orderId/payment-status");
+          "http://192.168.1.19:8000/api/owner/fnb-orders/$orderId/payment-status");
 
       final response = await http.put(
         url,
@@ -143,8 +143,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
         setState(() {
           final idx = orders.indexWhere((o) => o.id == orderId);
           if (idx != -1) {
-            orders[idx] =
-                orders[idx].copyWith(paymentStatus: newPaymentStatus);
+            orders[idx] = orders[idx].copyWith(paymentStatus: newPaymentStatus);
           }
         });
 
@@ -314,7 +313,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
                                         Text("Item: ${order.items.join(', ')}"),
                                         const SizedBox(height: 6),
 
-                                        // ✅ tampilkan bukti transfer
+                                        
                                         if (order.receiptUrl != null)
                                           Column(
                                             crossAxisAlignment:
@@ -367,7 +366,8 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
                                                         onPressed: () {
                                                           Navigator.pop(
                                                               context);
-                                                          if (value == 'pending' ||
+                                                          if (value ==
+                                                                  'pending' ||
                                                               value ==
                                                                   'processing' ||
                                                               value ==

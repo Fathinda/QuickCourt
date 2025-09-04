@@ -5,6 +5,7 @@ import 'package:quick_court_booking/models/venue_detail_model.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:quick_court_booking/screens/booking/views/booking_detail_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quick_court_booking/helper/chat_helper.dart';
 
@@ -73,7 +74,7 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
                           DateFormat('yyyy-MM-dd').format(fullDate);
 
                       final response = await http.get(Uri.parse(
-                          'http://192.168.1.12:8000/api/venues/${widget.venue.id}/available-times?date=$formatted'));
+                          'http://192.168.1.19:8000/api/venues/${widget.venue.id}/available-times?date=$formatted'));
 
                       if (response.statusCode == 200) {
                         final data = jsonDecode(response.body);
@@ -308,14 +309,9 @@ class _KonfirmasiBookingScreenState extends State<KonfirmasiBookingScreen> {
 
     setState(() => isLoading = true);
 
-    print("Venue ID: ${widget.venue.id}");
-    print("Total price: ${widget.hargaTotal}");
-
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('laravel_token');
-      print('Token: $token');
-
       if (token == null) throw Exception('Token tidak ditemukan');
 
       final sortedSlots = widget.slotTerpilih..sort();
@@ -325,13 +321,14 @@ class _KonfirmasiBookingScreenState extends State<KonfirmasiBookingScreen> {
       if (widget.tanggalTerpilih.trim().isEmpty) {
         throw Exception('Tanggal belum dipilih');
       }
+
       final sekarang = DateTime.now();
       final parsedDate = DateFormat('EEE d MMM yyyy', 'id_ID')
           .parseLoose('${widget.tanggalTerpilih} ${sekarang.year}');
       final bookingDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.12:8000/api/bookings'),
+        Uri.parse('http://192.168.1.19:8000/api/bookings'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -344,26 +341,24 @@ class _KonfirmasiBookingScreenState extends State<KonfirmasiBookingScreen> {
           'start_time': startTime,
           'end_time': endTime,
           'total_price': widget.hargaTotal,
-          'payment_method': 'midtrans',
+          'payment_method': 'manual',
         }),
       );
 
-      print("Status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
-
       final responseData = jsonDecode(response.body);
+
       if (response.statusCode == 201 && responseData['success'] == true) {
+        final bookingId = responseData['booking_id']; // <-- Tambahkan ini
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Booking berhasil!')),
         );
 
-        // final prefs = await SharedPreferences.getInstance();
-        // final currentUserId = prefs.getString('user_id') ?? '';
-        // final ownerId = widget.venue.ownerId;
-
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const EntryPoint()),
+          MaterialPageRoute(
+            builder: (_) => DetailBookingScreen(bookingId: bookingId),
+          ),
         );
       } else {
         throw Exception(responseData['message'] ?? 'Gagal booking');

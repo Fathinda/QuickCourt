@@ -55,6 +55,6 @@ class Venue {
     if (img.startsWith("http")) {
       return img;
     }
-    return "http://192.168.1.12:8000/storage/$img";
+    return "http://192.168.1.19:8000/storage/$img";
   }
 }

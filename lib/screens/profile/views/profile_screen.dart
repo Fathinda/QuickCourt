@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               try {
                 final userResponse = await http.get(
-                  Uri.parse('http://192.168.1.12:8000/api/user'),
+                  Uri.parse('http://192.168.1.19:8000/api/user'),
                   headers: {
                     'Authorization': 'Bearer $token',
                     'Accept': 'application/json',
@@ -147,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 }
 
                 final venueResponse = await http.get(
-                  Uri.parse('http://192.168.1.12:8000/api/owner/check-venue'),
+                  Uri.parse('http://192.168.1.19:8000/api/owner/check-venue'),
                   headers: {
                     'Authorization': 'Bearer $token',
                     'Accept': 'application/json',

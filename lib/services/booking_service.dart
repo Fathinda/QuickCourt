@@ -14,7 +14,7 @@ class BookingService {
 
     print("🔑 Token yang akan digunakan: $token");
 
-    final url = Uri.parse('http://192.168.1.12:8000/api/bookings');
+    final url = Uri.parse('http://192.168.1.19:8000/api/bookings');
 
     final response = await http.post(
       url,

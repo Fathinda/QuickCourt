@@ -37,18 +37,18 @@ class BookingOwner {
     String imagePath = '';
     if (primaryImage['image_url'] != null) {
       imagePath =
-          "http://192.168.1.12:8000/storage/${primaryImage['image_url']}";
+          "http://192.168.1.19:8000/storage/${primaryImage['image_url']}";
     }
 
     String? userPhotoPath;
     if (user['photo_url'] != null) {
-      userPhotoPath = "http://192.168.1.12:8000/storage/${user['photo_url']}";
+      userPhotoPath = "http://192.168.1.19:8000/storage/${user['photo_url']}";
     }
 
     String? receiptPath;
     if (payment['receipt_url'] != null) {
       receiptPath =
-          "http://192.168.1.12:8000/storage/${payment['receipt_url']}";
+          "http://192.168.1.19:8000/storage/${payment['receipt_url']}";
     }
 
     return BookingOwner(

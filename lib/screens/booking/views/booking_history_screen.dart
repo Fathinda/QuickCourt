@@ -31,7 +31,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
       final token = prefs.getString('laravel_token');
 
       final res = await http.get(
-        Uri.parse("http://192.168.1.12:8000/api/booking-history"),
+        Uri.parse("http://192.168.1.19:8000/api/booking-history"),
         headers: {
           "Authorization": "Bearer $token",
           "Accept": "application/json",

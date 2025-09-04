@@ -8,7 +8,7 @@ import 'package:quick_court_booking/state/menu_state.dart';
 
 final ValueNotifier<List<CartItem>> cart = ValueNotifier<List<CartItem>>([]);
 
-const String baseUrl = 'http://192.168.1.12:8000/api';
+const String baseUrl = 'http://192.168.1.19:8000/api';
 
 Future<String> getToken() async {
   final prefs = await SharedPreferences.getInstance();

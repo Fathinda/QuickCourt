@@ -36,7 +36,7 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
   Future<void> _fetchBookingDetail() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.1.12:8000/api/bookings/${widget.bookingId}"),
+        Uri.parse("http://192.168.1.19:8000/api/bookings/${widget.bookingId}"),
         headers: {
           "Accept": "application/json",
           if (token != null) "Authorization": "Bearer $token",
@@ -120,7 +120,7 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
                           final request = http.MultipartRequest(
                             'POST',
                             Uri.parse(
-                                "http://192.168.1.12:8000/api/payments/$paymentId/pay"),
+                                "http://192.168.1.19:8000/api/payments/$paymentId/pay"),
                           );
 
                           if (token != null) {
@@ -178,7 +178,7 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
     try {
       final response = await http.post(
         Uri.parse(
-            "http://192.168.1.12:8000/api/bookings/${widget.bookingId}/pay"),
+            "http://192.168.1.19:8000/api/bookings/${widget.bookingId}/pay"),
         headers: {
           "Accept": "application/json",
           if (token != null) "Authorization": "Bearer $token",
@@ -231,7 +231,6 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
           ),
         );
       } else {
-        
         final message = data['message'] ?? "Gagal memproses pembayaran manual";
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message)),
@@ -258,7 +257,7 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
       final request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            "http://192.168.1.12:8000/api/payments/$paymentId/upload-receipt"),
+            "http://192.168.1.19:8000/api/payments/$paymentId/upload-receipt"),
       );
       request.headers['Authorization'] = 'Bearer $token';
       request.files
@@ -367,7 +366,7 @@ Status: ${booking['status'] ?? '-'}
 
     final imageUrl = (venue['primary_image'] != null &&
             venue['primary_image']['image_url'] != null)
-        ? "http://192.168.1.12:8000/storage/${venue['primary_image']['image_url']}"
+        ? "http://192.168.1.19:8000/storage/${venue['primary_image']['image_url']}"
         : '';
 
     final lat = double.tryParse(venue['latitude']?.toString() ?? '');

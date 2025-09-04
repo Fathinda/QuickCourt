@@ -105,13 +105,18 @@ class _EntryPointState extends State<EntryPoint> {
                   icon: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      SvgPicture.asset(
-                        "assets/icons/Notification.svg",
-                        height: 24,
-                        colorFilter: ColorFilter.mode(
-                          Theme.of(context).textTheme.bodyLarge!.color!,
-                          BlendMode.srcIn,
-                        ),
+                      // SvgPicture.asset(
+                      //   "assets/icons/Notification.svg",
+                      //   height: 24,
+                      //   colorFilter: ColorFilter.mode(
+                      //     Theme.of(context).textTheme.bodyLarge!.color!,
+                      //     BlendMode.srcIn,
+                      //   ),
+                      // ),
+                      Icon(
+                        Icons.chat_bubble_outline,
+                        size: 24,
+                        color: Theme.of(context).textTheme.bodyLarge!.color!,
                       ),
                       Positioned(
                         right: -2,
