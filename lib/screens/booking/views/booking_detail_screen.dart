@@ -36,7 +36,7 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
   Future<void> _fetchBookingDetail() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.1.22:8000/api/bookings/${widget.bookingId}"),
+        Uri.parse("http://192.168.1.12:8000/api/bookings/${widget.bookingId}"),
         headers: {
           "Accept": "application/json",
           if (token != null) "Authorization": "Bearer $token",
@@ -120,7 +120,7 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
                           final request = http.MultipartRequest(
                             'POST',
                             Uri.parse(
-                                "http://192.168.1.22:8000/api/payments/$paymentId/pay"),
+                                "http://192.168.1.12:8000/api/payments/$paymentId/pay"),
                           );
 
                           if (token != null) {
@@ -178,23 +178,29 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
     try {
       final response = await http.post(
         Uri.parse(
-            "http://192.168.1.22:8000/api/bookings/${widget.bookingId}/pay"),
+            "http://192.168.1.12:8000/api/bookings/${widget.bookingId}/pay"),
         headers: {
           "Accept": "application/json",
           if (token != null) "Authorization": "Bearer $token",
         },
       );
 
+      final data = jsonDecode(response.body);
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
         final paymentId = data['payment_id'];
         final manualInfo = data['manual_payment_info'];
 
+        // Update state booking biar payment tersimpan
         setState(() {
-          booking?['payment'] = {'id': paymentId};
+          booking?['payment'] = {
+            "id": paymentId,
+            "status": "pending",
+            "payment_method": "manual",
+          };
         });
 
-        // Tampilkan dialog rekening manual
+        // Tampilkan dialog instruksi
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -225,8 +231,10 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
           ),
         );
       } else {
+        
+        final message = data['message'] ?? "Gagal memproses pembayaran manual";
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Gagal memproses pembayaran manual")),
+          SnackBar(content: Text(message)),
         );
       }
     } catch (e) {
@@ -250,7 +258,7 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
       final request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            "http://192.168.1.22:8000/api/payments/$paymentId/upload-receipt"),
+            "http://192.168.1.12:8000/api/payments/$paymentId/upload-receipt"),
       );
       request.headers['Authorization'] = 'Bearer $token';
       request.files
@@ -265,7 +273,7 @@ class _DetailBookingScreenState extends State<DetailBookingScreen> {
         await _fetchBookingDetail();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Gagal upload bukti")),
+          SnackBar(content: Text("Gagal upload bukti")),
         );
       }
     } catch (e) {
@@ -359,7 +367,7 @@ Status: ${booking['status'] ?? '-'}
 
     final imageUrl = (venue['primary_image'] != null &&
             venue['primary_image']['image_url'] != null)
-        ? "http://192.168.1.22:8000/storage/${venue['primary_image']['image_url']}"
+        ? "http://192.168.1.12:8000/storage/${venue['primary_image']['image_url']}"
         : '';
 
     final lat = double.tryParse(venue['latitude']?.toString() ?? '');

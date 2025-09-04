@@ -43,7 +43,7 @@ class _OwnerPromoListScreenState extends State<OwnerPromoListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.22:8000/api/owner/venue/${widget.venueId}/promos");
+          "http://192.168.1.12:8000/api/owner/venue/${widget.venueId}/promos");
 
       final response = await http.get(url, headers: {
         "Authorization": "Bearer $token",
@@ -88,7 +88,7 @@ class _OwnerPromoListScreenState extends State<OwnerPromoListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url =
-          Uri.parse("http://192.168.1.22:8000/api/owner/promos/$promoId");
+          Uri.parse("http://192.168.1.12:8000/api/owner/promos/$promoId");
 
       final response = await http.delete(url, headers: {
         "Authorization": "Bearer $token",
@@ -369,7 +369,7 @@ class _AddPromoDialogState extends State<AddPromoDialog> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final uri = Uri.parse(
-          "http://192.168.1.22:8000/api/owner/venue/${widget.venueId}/promos");
+          "http://192.168.1.12:8000/api/owner/venue/${widget.venueId}/promos");
       final request = http.MultipartRequest('POST', uri)
         ..headers['Authorization'] = 'Bearer $token'
         ..fields['title'] = _titleController.text.trim()

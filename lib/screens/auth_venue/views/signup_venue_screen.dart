@@ -53,7 +53,7 @@ class _RegisterVenueScreenState extends State<RegisterVenueScreen> {
   Future<void> _fetchFacilities() async {
     try {
       final response =
-          await http.get(Uri.parse("http://192.168.1.22:8000/api/facilities"));
+          await http.get(Uri.parse("http://192.168.1.12:8000/api/facilities"));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
 
@@ -115,7 +115,7 @@ class _RegisterVenueScreenState extends State<RegisterVenueScreen> {
 
   Future<void> _fetchCategories() async {
     final response = await http.get(
-      Uri.parse("http://192.168.1.22:8000/api/categories"),
+      Uri.parse("http://192.168.1.12:8000/api/categories"),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -126,7 +126,7 @@ class _RegisterVenueScreenState extends State<RegisterVenueScreen> {
 
   Future<void> _fetchCities() async {
     final response = await http.get(
-      Uri.parse("http://192.168.1.22:8000/api/city"),
+      Uri.parse("http://192.168.1.12:8000/api/city"),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -191,7 +191,7 @@ class _RegisterVenueScreenState extends State<RegisterVenueScreen> {
 
     var request = http.MultipartRequest(
       "POST",
-      Uri.parse("http://192.168.1.22:8000/api/owner/venues"),
+      Uri.parse("http://192.168.1.12:8000/api/owner/venues"),
     );
 
     request.headers["Authorization"] = "Bearer $token";

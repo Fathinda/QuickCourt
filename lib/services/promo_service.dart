@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:quick_court_booking/models/venue_promo_model.dart';
 
 class PromoService {
-  static const String baseUrl = "http://192.168.1.22:8000/api"; // sesuaikan IP
+  static const String baseUrl = "http://192.168.1.12:8000/api"; // sesuaikan IP
 
   static Future<List<VenuePromo>> fetchPromos() async {
     try {

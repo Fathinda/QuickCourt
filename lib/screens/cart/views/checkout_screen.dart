@@ -61,7 +61,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.1.22:8000/api/fnb-cart/checkout'),
+        Uri.parse('http://192.168.1.12:8000/api/fnb-cart/checkout'),
       );
 
       request.headers['Authorization'] = 'Bearer $token';

@@ -73,7 +73,7 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
                           DateFormat('yyyy-MM-dd').format(fullDate);
 
                       final response = await http.get(Uri.parse(
-                          'http://192.168.1.22:8000/api/venues/${widget.venue.id}/available-times?date=$formatted'));
+                          'http://192.168.1.12:8000/api/venues/${widget.venue.id}/available-times?date=$formatted'));
 
                       if (response.statusCode == 200) {
                         final data = jsonDecode(response.body);
@@ -331,7 +331,7 @@ class _KonfirmasiBookingScreenState extends State<KonfirmasiBookingScreen> {
       final bookingDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.22:8000/api/bookings'),
+        Uri.parse('http://192.168.1.12:8000/api/bookings'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

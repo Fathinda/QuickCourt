@@ -77,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       final idToken = await user.getIdToken();
       final response = await http.post(
-        Uri.parse("http://192.168.1.22:8000/api/firebase-register"),
+        Uri.parse("http://192.168.1.12:8000/api/firebase-register"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'idToken': idToken,

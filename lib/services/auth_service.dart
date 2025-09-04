@@ -80,7 +80,7 @@ class AuthService {
       final displayName = user.displayName;
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.22:8000/api/firebase-login'),
+        Uri.parse('http://192.168.1.12:8000/api/firebase-login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'idToken': idToken,

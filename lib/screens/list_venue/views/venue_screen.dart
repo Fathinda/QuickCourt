@@ -49,7 +49,7 @@ class _VenueScreenState extends State<VenueScreen> {
     });
 
     try {
-      String url = 'http://192.168.1.22:8000/api/venues?page=$currentPage';
+      String url = 'http://192.168.1.12:8000/api/venues?page=$currentPage';
       if (selectedCategoryId != 0) {
         url += '&category=$selectedCategoryId';
       }
@@ -92,7 +92,7 @@ class _VenueScreenState extends State<VenueScreen> {
 
   Future<void> fetchCategories() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.22:8000/api/categories'));
+        await http.get(Uri.parse('http://192.168.1.12:8000/api/categories'));
 
     if (response.statusCode == 200) {
       final List jsonData = jsonDecode(response.body);

@@ -20,7 +20,13 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
   String? error;
 
   String selectedStatusFilter = 'All';
-  List<String> statusOptions = ['All', 'Pending', 'Completed', 'Cancelled'];
+  List<String> statusOptions = [
+    'All',
+    'Pending',
+    'Processing',
+    'Delivered',
+    'Cancelled'
+  ];
 
   @override
   void initState() {
@@ -44,17 +50,11 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.22:8000/api/owner/venues/${widget.venueId}/fnb-orders");
-
-      print("[DEBUG] Requesting: $url");
-      print("[DEBUG] Token: Bearer $token");
+          "http://192.168.1.12:8000/api/owner/venues/${widget.venueId}/fnb-orders");
 
       final response = await http.get(url, headers: {
         "Authorization": "Bearer $token",
       });
-
-      print("[DEBUG] Response status: ${response.statusCode}");
-      print("[DEBUG] Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -68,9 +68,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       } else {
         throw Exception("Gagal mengambil data: ${response.statusCode}");
       }
-    } catch (e, stacktrace) {
-      print("[DEBUG] Error: $e");
-      print("[DEBUG] Stacktrace: $stacktrace");
+    } catch (e) {
       setState(() {
         error = e.toString();
         isLoading = false;
@@ -92,7 +90,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.22:8000/api/owner/fnb-orders/$orderId/status");
+          "http://192.168.1.12:8000/api/owner/fnb-orders/$orderId/status");
 
       final response = await http.put(
         url,
@@ -124,16 +122,91 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
     }
   }
 
+  Future<void> updatePaymentStatus(int orderId, String newPaymentStatus) async {
+    try {
+      final token = await _getToken();
+      if (token == null) throw Exception("Token tidak ditemukan");
+
+      final url = Uri.parse(
+          "http://192.168.1.12:8000/api/owner/fnb-orders/$orderId/payment-status");
+
+      final response = await http.put(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+        body: json.encode({"payment_status": newPaymentStatus}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          final idx = orders.indexWhere((o) => o.id == orderId);
+          if (idx != -1) {
+            orders[idx] =
+                orders[idx].copyWith(paymentStatus: newPaymentStatus);
+          }
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Payment status diubah ke $newPaymentStatus")),
+        );
+      } else {
+        throw Exception("Gagal update payment status");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
   Widget statusBadge(String status) {
     Color color;
     switch (status.toLowerCase()) {
-      case 'completed':
+      case 'delivered':
         color = Colors.green;
+        break;
+      case 'processing':
+        color = Colors.blue;
         break;
       case 'pending':
         color = Colors.orange;
         break;
       case 'cancelled':
+        color = Colors.red;
+        break;
+      default:
+        color = Colors.grey;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        status.toUpperCase(),
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+  Widget paymentBadge(String status) {
+    Color color;
+    switch (status.toLowerCase()) {
+      case 'paid':
+        color = Colors.green;
+        break;
+      case 'waiting_verification':
+        color = Colors.orange;
+        break;
+      case 'rejected':
         color = Colors.red;
         break;
       default:
@@ -236,56 +309,116 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
                                         ),
                                         const SizedBox(height: 6),
                                         Text("Tanggal: ${order.date}"),
-                                        Text(
-                                            "Total: Rp ${order.total.toString()}"),
+                                        Text("Total: Rp ${order.total}"),
                                         const SizedBox(height: 6),
                                         Text("Item: ${order.items.join(', ')}"),
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: PopupMenuButton<String>(
-                                            onSelected: (value) {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                  title:
-                                                      const Text("Konfirmasi"),
-                                                  content: Text(
-                                                      "Yakin ingin ubah status ke '$value'?"),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context),
-                                                      child:
-                                                          const Text("Batal"),
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                        updateOrderStatus(
-                                                            order.id, value);
-                                                      },
-                                                      child: const Text(
-                                                          "Ya, Ubah"),
-                                                    ),
-                                                  ],
+                                        const SizedBox(height: 6),
+
+                                        // ✅ tampilkan bukti transfer
+                                        if (order.receiptUrl != null)
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(height: 6),
+                                              Text(
+                                                  "Bukti Transfer (${order.receiptStatus}):"),
+                                              const SizedBox(height: 4),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  // buka bukti di browser
+                                                  // (pakai url_launcher kalau mau)
+                                                },
+                                                child: Image.network(
+                                                  order.receiptUrl!,
+                                                  height: 120,
+                                                  width: double.infinity,
+                                                  fit: BoxFit.cover,
                                                 ),
-                                              );
-                                            },
-                                            icon: const Icon(Icons.more_vert),
-                                            itemBuilder: (context) => const [
-                                              PopupMenuItem(
-                                                  value: 'pending',
-                                                  child: Text('Pending')),
-                                              PopupMenuItem(
-                                                  value: 'completed',
-                                                  child: Text('Completed')),
-                                              PopupMenuItem(
-                                                  value: 'cancelled',
-                                                  child: Text('Cancelled')),
+                                              ),
                                             ],
                                           ),
+
+                                        const SizedBox(height: 6),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            paymentBadge(order.paymentStatus),
+                                            PopupMenuButton<String>(
+                                              onSelected: (value) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    title: const Text(
+                                                        "Konfirmasi"),
+                                                    content: Text(
+                                                        "Yakin ingin ubah status ke '$value'?"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                        child:
+                                                            const Text("Batal"),
+                                                      ),
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                          if (value == 'pending' ||
+                                                              value ==
+                                                                  'processing' ||
+                                                              value ==
+                                                                  'delivered' ||
+                                                              value ==
+                                                                  'cancelled') {
+                                                            updateOrderStatus(
+                                                                order.id,
+                                                                value);
+                                                          } else {
+                                                            updatePaymentStatus(
+                                                                order.id,
+                                                                value);
+                                                          }
+                                                        },
+                                                        child: const Text(
+                                                            "Ya, Ubah"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              icon: const Icon(Icons.more_vert),
+                                              itemBuilder: (context) => const [
+                                                PopupMenuItem(
+                                                    value: 'pending',
+                                                    child: Text('Pending')),
+                                                PopupMenuItem(
+                                                    value: 'processing',
+                                                    child: Text('Processing')),
+                                                PopupMenuItem(
+                                                    value: 'delivered',
+                                                    child: Text('Delivered')),
+                                                PopupMenuItem(
+                                                    value: 'cancelled',
+                                                    child: Text('Cancelled')),
+                                                PopupMenuDivider(),
+                                                PopupMenuItem(
+                                                    value:
+                                                        'waiting_verification',
+                                                    child: Text(
+                                                        'Waiting Verification')),
+                                                PopupMenuItem(
+                                                    value: 'paid',
+                                                    child: Text('Paid')),
+                                                PopupMenuItem(
+                                                    value: 'rejected',
+                                                    child: Text('Rejected')),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),

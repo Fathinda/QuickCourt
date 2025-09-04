@@ -38,8 +38,10 @@ class _DetailVenueScreenState extends State<DetailVenueScreen> {
   Future<void> fetchVenue() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.22:8000/api/venues/${widget.venueId}'),
+        Uri.parse('http://192.168.1.12:8000/api/venues/${widget.venueId}'),
       );
+
+      if (!mounted) return; // pastikan widget masih ada
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -52,6 +54,7 @@ class _DetailVenueScreenState extends State<DetailVenueScreen> {
       }
     } catch (e) {
       print('Error: $e');
+      if (!mounted) return; 
       setState(() {
         isLoading = false;
       });
@@ -456,7 +459,7 @@ class _DetailVenueScreenState extends State<DetailVenueScreen> {
                           'Fetching owner data from API for ownerId: $ownerId');
                       try {
                         final response = await http.get(Uri.parse(
-                            'http://192.168.1.22:8000/api/users/id/$ownerId'));
+                            'http://192.168.1.12:8000/api/users/id/$ownerId'));
 
                         print('API Response status: ${response.statusCode}');
                         print('API Response body: ${response.body}');

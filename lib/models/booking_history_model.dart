@@ -27,7 +27,7 @@ class BookingHistory {
     // if (venue['primary_image'] != null &&
     //     venue['primary_image']['image_url'] != null) {
     //   imagePath =
-    //       "http://192.168.1.22:8000/storage/${venue['primary_image']['image_url']}";
+    //       "http://192.168.1.12:8000/storage/${venue['primary_image']['image_url']}";
     // }
 
     String imagePath = '';
@@ -35,7 +35,7 @@ class BookingHistory {
       final primaryImage = venue['primary_image'] as Map<String, dynamic>;
       if (primaryImage['image_url'] != null) {
         imagePath =
-            "http://192.168.1.22:8000/storage/${primaryImage['image_url']}";
+            "http://192.168.1.12:8000/storage/${primaryImage['image_url']}";
       }
     }
 
