@@ -20,7 +20,7 @@ QuickCourt Mobile is a premium, high-performance sports venue booking platform b
 - **Framework**: [Flutter](https://flutter.dev)
 - **Language**: Dart
 - **State Management**: Provider
-- **Backend**: Firebase (Auth, Firestore, Storage)
+- **Backend**: Firebase (Auth, Firestore, Storage, Realtime Chat)
 - **Design Pattern**: Feature-driven Architecture
 
 ---
@@ -62,13 +62,6 @@ QuickCourt Mobile is a premium, high-performance sports venue booking platform b
 
 If you need any help or have any questions, feel free to reach out:
 
-📩 Email: [theflutterway@gmail.com](mailto:theflutterway@gmail.com)
+📩 Email: [fathinda0@gmail.com](mailto:fathinda0@gmail.com)
 
 ---
-
-## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-Developed with ❤️ for the Sports Community.
