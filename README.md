@@ -18,7 +18,7 @@ A simple sports venue booking application built with **Flutter**. This project i
 
 - **Framework**: [Flutter](https://flutter.dev)
 - **Language**: Dart
-- **Database**: Firebase (Firestore & Auth)
+- **Database**: MySQL & Firebase (Firestore, Auth, Realtime Chat)
 - **State Management**: Provider (Basic implementation)
 
 ---
