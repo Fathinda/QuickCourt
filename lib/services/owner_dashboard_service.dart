@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:quick_court_booking/models/owner_dashboard_model.dart';
 
 class OwnerDashboardService {
-  final String baseUrl = "http://192.168.1.19:8000/api";
+  final String baseUrl = "http://192.168.1.10:8000/api";
 
   Future<OwnerDashboardData> fetchDashboard(String token) async {
     final response = await http.get(

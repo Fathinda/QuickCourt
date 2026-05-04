@@ -2,9 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:quick_court_booking/components/Banner/M/banner_m_style_1.dart';
-// import 'package:quick_court_booking/components/Banner/M/banner_m_style_2.dart';
-// import 'package:quick_court_booking/components/Banner/M/banner_m_style_3.dart';
-// import 'package:quick_court_booking/components/Banner/M/banner_m_style_4.dart';
 import 'package:quick_court_booking/components/dot_indicators.dart';
 
 import '../../../../constants.dart';
@@ -43,8 +40,8 @@ class _OffersCarouselState extends State<OffersCarousel> {
 
       _pageController.animateToPage(
         _selectedIndex,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeInExpo,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOutCubic,
       );
     });
     super.initState();
@@ -59,45 +56,49 @@ class _OffersCarouselState extends State<OffersCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.87,
-      child: Stack(
-        alignment: Alignment.bottomRight,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
         children: [
-          PageView.builder(
-            controller: _pageController,
-            itemCount: offers.length,
-            onPageChanged: (int index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            itemBuilder: (context, index) => offers[index],
-          ),
-          FittedBox(
-            child: Padding(
-              padding: const EdgeInsets.all(defaultPadding),
-              child: SizedBox(
-                height: 48,
-                child: Row(
-                  children: List.generate(
-                    offers.length,
-                    (index) {
-                      return Padding(
-                        padding:
-                            const EdgeInsets.only(left: defaultPadding / 4),
-                        child: DotIndicator(
-                          isActive: index == _selectedIndex,
-                          activeColor: Colors.black38,
-                          inActiveColor: Colors.black12,
-                        ),
-                      );
-                    },
-                  ),
-                ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(cardBorderRadius),
+            child: AspectRatio(
+              aspectRatio: 1.87,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: offers.length,
+                onPageChanged: (int index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                itemBuilder: (context, index) => offers[index],
               ),
             ),
-          )
+          ),
+          const SizedBox(height: 12),
+          // Modern dot indicators
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              offers.length,
+              (index) {
+                final isActive = index == _selectedIndex;
+                return AnimatedContainer(
+                  duration: animDurationMedium,
+                  curve: Curves.easeInOutCubic,
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  height: 6,
+                  width: isActive ? 24 : 6,
+                  decoration: BoxDecoration(
+                    gradient: isActive ? primaryGradient : null,
+                    color: isActive ? null : blackColor20,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

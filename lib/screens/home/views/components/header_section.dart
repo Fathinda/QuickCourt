@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:quick_court_booking/constants.dart';
 import 'package:quick_court_booking/route/screen_export.dart';
-// import 'package:quick_court_booking/components/Banner/M/banner_m_style_1.dart';
-import 'package:quick_court_booking/screens/home/views/components/offers_carousel.dart';
 import 'package:quick_court_booking/screens/list_venue/views/venue_screen.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import 'menu_button.dart';
 
 class HeaderSection extends StatefulWidget {
@@ -39,7 +39,7 @@ class _HeaderSectionState extends State<HeaderSection> {
     }
 
     final response = await http.get(
-      Uri.parse('http://192.168.1.19:8000/api/user'),
+      Uri.parse('http://192.168.1.10:8000/api/user'),
       headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',
@@ -61,78 +61,146 @@ class _HeaderSectionState extends State<HeaderSection> {
     }
   }
 
+  Widget _buildShimmerHeader() {
+    return Shimmer.fromColors(
+      baseColor: shimmerBaseColor,
+      highlightColor: shimmerHighlightColor,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(width: 180, height: 22, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8))),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(child: Container(height: 130, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)))),
+                const SizedBox(width: 12),
+                Expanded(child: Container(height: 130, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)))),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return name == null
-        ? const Padding(
-            padding: EdgeInsets.all(20),
-            child: LinearProgressIndicator(),
-          )
+        ? _buildShimmerHeader()
         : Stack(
             children: [
+              // Background image with gradient overlay
               Container(
-                height: 290,
+                height: 280,
                 width: double.infinity,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(28),
+                    bottomRight: Radius.circular(28),
                   ),
-                  child: Image.asset(
-                    'assets/images/header_bg.png',
-                    fit: BoxFit.cover,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        'assets/images/header_bg.png',
+                        fit: BoxFit.cover,
+                      ),
+                      // Premium dark gradient overlay
+                      Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0x00000000),
+                              Color(0x40000000),
+                              Color(0x99000000),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: [0.0, 0.5, 1.0],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 28),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Greeting row with avatar
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Image.asset(
-                          name == 'Guest'
-                              ? 'assets/images/signUp_dark.png'
-                              : 'assets/images/user.png',
-                          width: 40,
-                          height: 40,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text: "Hello, ",
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: name ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
+                        // Avatar with gradient border
+                        Container(
+                          padding: const EdgeInsets.all(2.5),
+                          decoration: BoxDecoration(
+                            gradient: primaryGradient,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              name == 'Guest'
+                                  ? 'assets/images/signUp_dark.png'
+                                  : 'assets/images/user.png',
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Hello 👋",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white.withOpacity(0.8),
+                                ),
+                              ),
+                              Text(
+                                name ?? '',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
+                    // Menu buttons
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 0.0, vertical: 13),
+                          horizontal: 0.0, vertical: 0),
                       child: Row(
                         children: [
                           MenuButton(
@@ -170,7 +238,6 @@ class _HeaderSectionState extends State<HeaderSection> {
                         ],
                       ),
                     ),
-                    const OffersCarousel(),
                   ],
                 ),
               ),

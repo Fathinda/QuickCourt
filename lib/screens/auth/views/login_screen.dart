@@ -35,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
+        
       );
 
       final user = userCredential.user;
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print("🔥 Token copied to clipboard.");
       final displayName = user.displayName;
       final response = await http.post(
-        Uri.parse('http://192.168.1.19:8000/api/firebase-login'),
+        Uri.parse('http://192.168.1.10:8000/api/firebase-login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'idToken': idToken,

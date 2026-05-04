@@ -22,7 +22,7 @@ class VenuePromo {
   factory VenuePromo.fromJson(Map<String, dynamic> json) {
     print("📥 JSON PROMO: $json"); // Debug
 
-    final baseUrl = "http://192.168.1.19:8000/"; // ganti sesuai IP/backend kamu
+    final baseUrl = "http://192.168.1.10:8000/"; // ganti sesuai IP/backend kamu
 
     final parsed = VenuePromo(
       id: json['id'],

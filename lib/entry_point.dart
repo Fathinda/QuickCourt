@@ -1,9 +1,11 @@
 
+import 'dart:async';
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quick_court_booking/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:quick_court_booking/helper/chat_badge_controller.dart';
 import 'package:quick_court_booking/screens/booking/views/booking_history_screen.dart';
 import 'package:quick_court_booking/screens/chat/chat_list_screen.dart';
@@ -23,7 +25,7 @@ class EntryPoint extends StatefulWidget {
   State<EntryPoint> createState() => _EntryPointState();
 }
 
-class _EntryPointState extends State<EntryPoint> {
+class _EntryPointState extends State<EntryPoint> with TickerProviderStateMixin {
   final List<Widget> _pages = [
     const HomeScreen(),
     const VenueScreen(),
@@ -33,19 +35,30 @@ class _EntryPointState extends State<EntryPoint> {
   ];
 
   int _currentIndex = 0;
-
+  StreamSubscription? _chatSubscription;
+  late AnimationController _fabController;
 
   @override
   void initState() {
     super.initState();
     listenNewChats();
+    _fabController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    )..forward();
   }
 
+  @override
+  void dispose() {
+    _chatSubscription?.cancel();
+    _fabController.dispose();
+    super.dispose();
+  }
 
   void listenNewChats() {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-    FirebaseFirestore.instance
+    _chatSubscription = FirebaseFirestore.instance
         .collectionGroup('messages')
         .where('recipientId', isEqualTo: currentUserId)
         .where('read', isEqualTo: false)
@@ -56,9 +69,18 @@ class _EntryPointState extends State<EntryPoint> {
         });
   }
 
+  void _onTabTapped(int index) {
+    if (_currentIndex != index) {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: (_currentIndex == 3 || _currentIndex == 2)
           ? null
@@ -80,12 +102,21 @@ class _EntryPointState extends State<EntryPoint> {
                       MaterialPageRoute(builder: (_) => const SearchScreen()),
                     );
                   },
-                  icon: SvgPicture.asset(
-                    "assets/icons/Search.svg",
-                    height: 24,
-                    colorFilter: ColorFilter.mode(
-                        Theme.of(context).textTheme.bodyLarge!.color!,
-                        BlendMode.srcIn),
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.08)
+                          : Colors.black.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: SvgPicture.asset(
+                      "assets/icons/Search.svg",
+                      height: 20,
+                      colorFilter: ColorFilter.mode(
+                          Theme.of(context).textTheme.bodyLarge!.color!,
+                          BlendMode.srcIn),
+                    ),
                   ),
                 ),
 
@@ -105,18 +136,19 @@ class _EntryPointState extends State<EntryPoint> {
                   icon: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      // SvgPicture.asset(
-                      //   "assets/icons/Notification.svg",
-                      //   height: 24,
-                      //   colorFilter: ColorFilter.mode(
-                      //     Theme.of(context).textTheme.bodyLarge!.color!,
-                      //     BlendMode.srcIn,
-                      //   ),
-                      // ),
-                      Icon(
-                        Icons.chat_bubble_outline,
-                        size: 24,
-                        color: Theme.of(context).textTheme.bodyLarge!.color!,
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.08)
+                              : Colors.black.withOpacity(0.04),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          size: 20,
+                          color: Theme.of(context).textTheme.bodyLarge!.color!,
+                        ),
                       ),
                       Positioned(
                         right: -2,
@@ -128,12 +160,19 @@ class _EntryPointState extends State<EntryPoint> {
                             return Container(
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Colors.red,
+                                gradient: errorGradient,
                                 shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: errorColor.withOpacity(0.4),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               constraints: const BoxConstraints(
-                                minWidth: 16,
-                                minHeight: 16,
+                                minWidth: 18,
+                                minHeight: 18,
                               ),
                               child: Text(
                                 count > 99 ? '99+' : count.toString(),
@@ -151,66 +190,164 @@ class _EntryPointState extends State<EntryPoint> {
                     ],
                   ),
                 ),
+                const SizedBox(width: 4),
               ],
             ),
-      body: _pages[_currentIndex],
+      body: AnimatedSwitcher(
+        duration: animDurationMedium,
+        child: _pages[_currentIndex],
+      ),
 
       
-      bottomNavigationBar: ConvexAppBar(
-        style: TabStyle.textIn,
-        backgroundColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.white
-            : const Color(0xFF101015),
-        activeColor: Colors.blue,
-        color: Colors.grey,
-        items: [
-          TabItem(
-            icon: SvgPicture.asset(
-              "assets/icons/home.svg",
-              height: 24,
-              color: _currentIndex == 0 ? Colors.blue : Colors.grey,
-            ),
-            title: "Home",
-          ),
-          TabItem(
-            icon: SvgPicture.asset(
-              "assets/icons/building-stadium.svg",
-              height: 24,
-              color: _currentIndex == 1 ? Colors.blue : Colors.grey,
-            ),
-            title: "Venue",
-          ),
-          TabItem(
-            icon: SvgPicture.asset(
-              "assets/icons/fast_food.svg",
-              height: 24,
-              color: _currentIndex == 2 ? Colors.blue : Colors.grey,
-            ),
-            title: "F&B",
-          ),
-          TabItem(
-            icon: SvgPicture.asset(
-              "assets/icons/file-invoice.svg",
-              height: 24,
-              color: _currentIndex == 3 ? Colors.blue : Colors.grey,
-            ),
-            title: "Booking",
-          ),
-          TabItem(
-            icon: SvgPicture.asset(
-              "assets/icons/Profile.svg",
-              height: 24,
-              color: _currentIndex == 4 ? Colors.blue : Colors.grey,
-            ),
-            title: "Profile",
+      bottomNavigationBar: _ModernBottomNav(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        isDark: isDark,
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Modern Frosted Glass Bottom Navigation Bar
+// ---------------------------------------------------------------------------
+class _ModernBottomNav extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+  final bool isDark;
+
+  const _ModernBottomNav({
+    required this.currentIndex,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final items = [
+      _NavItem(icon: "assets/icons/home.svg", label: "Home"),
+      _NavItem(icon: "assets/icons/building-stadium.svg", label: "Venue"),
+      _NavItem(icon: "assets/icons/fast_food.svg", label: "F&B"),
+      _NavItem(icon: "assets/icons/file-invoice.svg", label: "Booking"),
+      _NavItem(icon: "assets/icons/Profile.svg", label: "Profile"),
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark
+            ? const Color(0xFF101015).withOpacity(0.92)
+            : Colors.white.withOpacity(0.92),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
           ),
         ],
-        initialActiveIndex: _currentIndex,
-        onTap: (int index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+      ),
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: glassBlur, sigmaY: glassBlur),
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(items.length, (index) {
+                  final isActive = index == currentIndex;
+                  return _NavItemWidget(
+                    item: items[index],
+                    isActive: isActive,
+                    isDark: isDark,
+                    onTap: () => onTap(index),
+                  );
+                }),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem {
+  final String icon;
+  final String label;
+  const _NavItem({required this.icon, required this.label});
+}
+
+class _NavItemWidget extends StatelessWidget {
+  final _NavItem item;
+  final bool isActive;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _NavItemWidget({
+    required this.item,
+    required this.isActive,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: animDurationMedium,
+        curve: Curves.easeInOutCubic,
+        padding: EdgeInsets.symmetric(
+          horizontal: isActive ? 16 : 12,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          gradient: isActive ? primaryGradient : null,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              item.icon,
+              height: 22,
+              colorFilter: ColorFilter.mode(
+                isActive
+                    ? Colors.white
+                    : (isDark ? Colors.grey[400]! : Colors.grey[500]!),
+                BlendMode.srcIn,
+              ),
+            ),
+            AnimatedSize(
+              duration: animDurationMedium,
+              curve: Curves.easeInOutCubic,
+              child: isActive
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Text(
+                        item.label,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ],
+        ),
       ),
     );
   }

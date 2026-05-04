@@ -42,7 +42,7 @@ class _OwnerVenueDashboardState extends State<OwnerVenueDashboard> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url =
-          "http://192.168.1.19:8000/api/owner-dashboard/${widget.venueId}";
+          "http://192.168.1.10:8000/api/owner-dashboard/${widget.venueId}";
       final response = await http.get(
         Uri.parse(url),
         headers: {"Authorization": "Bearer $token"},

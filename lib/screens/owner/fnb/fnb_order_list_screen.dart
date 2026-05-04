@@ -50,7 +50,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.19:8000/api/owner/venues/${widget.venueId}/fnb-orders");
+          "http://192.168.1.10:8000/api/owner/venues/${widget.venueId}/fnb-orders");
 
       final response = await http.get(url, headers: {
         "Authorization": "Bearer $token",
@@ -90,7 +90,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.19:8000/api/owner/fnb-orders/$orderId/status");
+          "http://192.168.1.10:8000/api/owner/fnb-orders/$orderId/status");
 
       final response = await http.put(
         url,
@@ -128,7 +128,7 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.19:8000/api/owner/fnb-orders/$orderId/payment-status");
+          "http://192.168.1.10:8000/api/owner/fnb-orders/$orderId/payment-status");
 
       final response = await http.put(
         url,
@@ -312,8 +312,6 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
                                         const SizedBox(height: 6),
                                         Text("Item: ${order.items.join(', ')}"),
                                         const SizedBox(height: 6),
-
-                                        
                                         if (order.receiptUrl != null)
                                           Column(
                                             crossAxisAlignment:
@@ -337,7 +335,6 @@ class _FnbOrderListScreenState extends State<FnbOrderListScreen> {
                                               ),
                                             ],
                                           ),
-
                                         const SizedBox(height: 6),
                                         Row(
                                           mainAxisAlignment:

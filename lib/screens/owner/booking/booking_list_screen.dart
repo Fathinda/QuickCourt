@@ -44,7 +44,7 @@ class _BookingListScreenState extends State<BookingListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.19:8000/api/owner/venues/${widget.venueId}/bookings");
+          "http://192.168.1.10:8000/api/owner/venues/${widget.venueId}/bookings");
       final response = await http.get(url, headers: {
         "Authorization": "Bearer $token",
       });
@@ -105,7 +105,7 @@ class _BookingListScreenState extends State<BookingListScreen> {
       if (token == null) throw Exception("Token tidak ditemukan");
 
       final url = Uri.parse(
-          "http://192.168.1.19:8000/api/owner/bookings/$bookingId/status");
+          "http://192.168.1.10:8000/api/owner/bookings/$bookingId/status");
       final response = await http.put(
         url,
         headers: {

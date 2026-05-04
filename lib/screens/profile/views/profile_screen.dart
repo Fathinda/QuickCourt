@@ -74,194 +74,217 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Navigator.pushNamed(context, userInfoScreenRoute);
             },
           ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       horizontal: defaultPadding, vertical: defaultPadding * 1.5),
-          //   child: GestureDetector(
-          //     onTap: () {},
-          //     child: const AspectRatio(
-          //       aspectRatio: 1.8,
-          //       child:
-          //           NetworkImageWithLoader("https://i.imgur.com/dz0BBom.png"),
-          //     ),
-          //   ),
-          // ),
 
           Padding(
             padding: const EdgeInsets.symmetric(
                 horizontal: defaultPadding, vertical: defaultPadding / 2),
             child: Text(
               "Account",
-              style: Theme.of(context).textTheme.titleSmall,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: blackColor40,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
           const SizedBox(height: defaultPadding / 2),
-          // ProfileMenuListTile(
-          //   text: "Profile Info",
-          //   svgSrc: "assets/icons/pro.svg",
-          //   press: () {
-          //     // Navigator.pushNamed(context, ordersScreenRoute);
-          //   },
-          // ),
 
-          ProfileMenuListTile(
-            text: "Owner Panel",
-            svgSrc: "assets/icons/Accessories.svg",
-            press: () async {
-              final prefs = await SharedPreferences.getInstance();
-              final token = prefs.getString('laravel_token');
+          // Owner Panel
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: softShadowSm,
+              ),
+              child: ProfileMenuListTile(
+                text: "Owner Panel",
+                svgSrc: "assets/icons/Accessories.svg",
+                press: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  final token = prefs.getString('laravel_token');
 
-              if (token == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please login first!')),
-                );
-                return;
-              }
+                  if (token == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please login first!')),
+                    );
+                    return;
+                  }
 
-              try {
-                final userResponse = await http.get(
-                  Uri.parse('http://192.168.1.19:8000/api/user'),
-                  headers: {
-                    'Authorization': 'Bearer $token',
-                    'Accept': 'application/json',
-                  },
-                );
-
-                if (userResponse.statusCode != 200) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Failed to get user data')),
-                  );
-                  return;
-                }
-
-                final userData = json.decode(userResponse.body);
-                final role = userData['role'];
-
-                if (role == 'admin') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AdminBookingScreen()),
-                  );
-                  return;
-                }
-
-                final venueResponse = await http.get(
-                  Uri.parse('http://192.168.1.19:8000/api/owner/check-venue'),
-                  headers: {
-                    'Authorization': 'Bearer $token',
-                    'Accept': 'application/json',
-                  },
-                );
-
-                if (venueResponse.statusCode != 200) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Failed to check venue')),
-                  );
-                  return;
-                }
-
-                final venueData = json.decode(venueResponse.body);
-                final venuesList = venueData['venues'];
-
-                if (venueData['exists'] != true ||
-                    venuesList == null ||
-                    !(venuesList is List) ||
-                    venuesList.isEmpty) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RegisterVenueScreen()),
-                  );
-                  return;
-                }
-
-                final List<Venue> venues =
-                    venuesList.map((json) => Venue.fromJson(json)).toList();
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OwnerDashboardScreen(venues: venues),
-                  ),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error: $e')),
-                );
-              }
-            },
-          ),
-          const SizedBox(height: defaultPadding),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       horizontal: defaultPadding, vertical: defaultPadding / 2),
-          //   child: Text(
-          //     "Personalization",
-          //     style: Theme.of(context).textTheme.titleSmall,
-          //   ),
-          // ),
-
-          const SizedBox(height: defaultPadding),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       horizontal: defaultPadding, vertical: defaultPadding / 2),
-          //   child: Text(
-          //     "Settings",
-          //     style: Theme.of(context).textTheme.titleSmall,
-          //   ),
-          // ),
-
-          const SizedBox(height: defaultPadding),
-
-          ListTile(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Logout"),
-                  content: const Text("Are you sure you want to logout?"),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text("No"),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                        print("Mulai logout");
-
-                        await logout();
-                        print("Selesai logout");
-
-                        if (!context.mounted) {
-                          print("Context tidak mounted");
-                          return;
-                        }
-
-                        print("Navigasi ke LoginScreen");
+                  try {
+                    final userResponse = await http.get(
+                      Uri.parse('http://192.168.1.10:8000/api/user'),
+                      headers: {
+                        'Authorization': 'Bearer $token',
+                        'Accept': 'application/json',
                       },
-                      child: const Text("Yes"),
-                    ),
-                  ],
-                ),
-              );
-            },
-            minLeadingWidth: 24,
-            leading: SvgPicture.asset(
-              "assets/icons/Logout.svg",
-              height: 24,
-              width: 24,
-              colorFilter: const ColorFilter.mode(
-                errorColor,
-                BlendMode.srcIn,
+                    );
+
+                    if (userResponse.statusCode != 200) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Failed to get user data')),
+                      );
+                      return;
+                    }
+
+                    final userData = json.decode(userResponse.body);
+                    final role = userData['role'];
+
+                    if (role == 'admin') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AdminBookingScreen()),
+                      );
+                      return;
+                    }
+
+                    final venueResponse = await http.get(
+                      Uri.parse(
+                          'http://192.168.1.10:8000/api/owner/check-venue'),
+                      headers: {
+                        'Authorization': 'Bearer $token',
+                        'Accept': 'application/json',
+                      },
+                    );
+
+                    if (venueResponse.statusCode != 200) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Failed to check venue')),
+                      );
+                      return;
+                    }
+
+                    final venueData = json.decode(venueResponse.body);
+                    final venuesList = venueData['venues'];
+
+                    if (venueData['exists'] != true ||
+                        venuesList == null ||
+                        !(venuesList is List) ||
+                        venuesList.isEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterVenueScreen()),
+                      );
+                      return;
+                    }
+
+                    final List<Venue> venues =
+                        venuesList.map((json) => Venue.fromJson(json)).toList();
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            OwnerDashboardScreen(venues: venues),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
+                },
               ),
             ),
-            title: const Text(
-              "Log Out",
-              style: TextStyle(color: errorColor, fontSize: 14, height: 1),
+          ),
+          const SizedBox(height: defaultPadding * 2),
+
+          // Logout
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: softShadowSm,
+              ),
+              child: ListTile(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Logout",
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                      content: const Text("Are you sure you want to logout?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text("No"),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: errorGradient,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () async {
+                                Navigator.of(context).pop();
+                                print("Mulai logout");
+                                await logout();
+                                print("Selesai logout");
+
+                                if (!context.mounted) {
+                                  print("Context tidak mounted");
+                                  return;
+                                }
+                                print("Navigasi ke LoginScreen");
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                child: Text("Yes",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600)),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                minLeadingWidth: 24,
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: errorColor.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: SvgPicture.asset(
+                    "assets/icons/Logout.svg",
+                    height: 20,
+                    width: 20,
+                    colorFilter: const ColorFilter.mode(
+                      errorColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                title: const Text(
+                  "Log Out",
+                  style: TextStyle(
+                      color: errorColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      height: 1),
+                ),
+              ),
             ),
-          )
+          ),
+          const SizedBox(height: 32),
         ],
       ),
     );

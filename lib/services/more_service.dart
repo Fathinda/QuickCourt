@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:quick_court_booking/models/venue_model.dart';
 
 class VenueService {
-  final String baseUrl = "http://192.168.1.19:8000/api";
+  final String baseUrl = "http://192.168.1.10:8000/api";
 
   Future<Venue?> getVenueByOwner(String token) async {
     final response = await http.get(

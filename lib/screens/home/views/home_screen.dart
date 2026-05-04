@@ -33,39 +33,15 @@ class HomeScreen extends StatelessWidget {
           slivers: [
             SliverToBoxAdapter(child: HeaderSection()),
 
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: Divider(
-                  thickness: 0.5,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
+            SliverToBoxAdapter(child: SizedBox(height: 24)),
 
             SliverToBoxAdapter(child: VenueRecomended()),
 
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: Divider(
-                  thickness: 0.5,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
+            SliverToBoxAdapter(child: SizedBox(height: 24)),
 
             SliverToBoxAdapter(child: OffersCarousel()),
 
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: Divider(
-                  thickness: 0.5,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
+            SliverToBoxAdapter(child: SizedBox(height: 24)),
             
             SliverToBoxAdapter(child: PromoSection()),
 

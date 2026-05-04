@@ -63,8 +63,101 @@ const Color warningColor = Color(0xFFFFBE21);
 const Color errorColor = Color(0xFFEA5B5B);
 
 const double defaultPadding = 16.0;
-const double defaultBorderRadious = 12.0;
+const double defaultBorderRadious = 16.0;
+const double cardBorderRadius = 20.0;
 const Duration defaultDuration = Duration(milliseconds: 300);
+
+// Animation Durations
+const Duration animDurationFast = Duration(milliseconds: 150);
+const Duration animDurationMedium = Duration(milliseconds: 300);
+const Duration animDurationSlow = Duration(milliseconds: 500);
+
+// Surface & Card Colors
+const Color surfaceColor = Color(0xFFF8F9FE);
+const Color cardColor = Colors.white;
+const Color shimmerBaseColor = Color(0xFFE8E8ED);
+const Color shimmerHighlightColor = Color(0xFFF5F5F8);
+
+// Glassmorphism Tokens
+const double glassBlur = 20.0;
+const Color glassColor = Color(0x30FFFFFF);
+const Color glassBorderColor = Color(0x40FFFFFF);
+
+// Modern UI Tokens
+const LinearGradient primaryGradient = LinearGradient(
+  colors: [Color(0xFF7B61FF), Color(0xFF9581FF)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const LinearGradient premiumGradient = LinearGradient(
+  colors: [Color(0xFF5E45FF), Color(0xFF9581FF)],
+  begin: Alignment.bottomLeft,
+  end: Alignment.topRight,
+);
+
+const LinearGradient accentGradient = LinearGradient(
+  colors: [Color(0xFF00C9A7), Color(0xFF00D4AA)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const LinearGradient successGradient = LinearGradient(
+  colors: [Color(0xFF2ED573), Color(0xFF7BED9F)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const LinearGradient warningGradient = LinearGradient(
+  colors: [Color(0xFFFFBE21), Color(0xFFFFD93D)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const LinearGradient errorGradient = LinearGradient(
+  colors: [Color(0xFFEA5B5B), Color(0xFFFF6B6B)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const LinearGradient darkOverlayGradient = LinearGradient(
+  colors: [Colors.transparent, Color(0xCC000000)],
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+);
+
+// Shadow Variants
+final List<BoxShadow> softShadow = [
+  BoxShadow(
+    color: const Color(0xFF7B61FF).withOpacity(0.08),
+    blurRadius: 24,
+    offset: const Offset(0, 8),
+  ),
+];
+
+final List<BoxShadow> softShadowSm = [
+  BoxShadow(
+    color: const Color(0xFF7B61FF).withOpacity(0.06),
+    blurRadius: 12,
+    offset: const Offset(0, 4),
+  ),
+];
+
+final List<BoxShadow> softShadowLg = [
+  BoxShadow(
+    color: const Color(0xFF7B61FF).withOpacity(0.12),
+    blurRadius: 32,
+    offset: const Offset(0, 12),
+  ),
+];
+
+final List<BoxShadow> neutralShadow = [
+  BoxShadow(
+    color: Colors.black.withOpacity(0.06),
+    blurRadius: 16,
+    offset: const Offset(0, 4),
+  ),
+];
 
 
 final passwordValidator = MultiValidator([
